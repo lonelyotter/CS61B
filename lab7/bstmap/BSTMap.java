@@ -7,8 +7,8 @@ import java.util.Set;
 public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
 
     private class Node {
-        private final K key;
-        private final V value;
+        private K key;
+        private V value;
         private Node left;
         private Node right;
 
@@ -159,10 +159,10 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
             } else if (node.right == null) {
                 return node.left;
             } else {
-                Node originalNode = node;
-                node = getMinChild(node.right);
-                node.left = originalNode.left;
-                node.right = remove(node.key, originalNode.right);
+                Node minNode = getMinChild(node.right);
+                node.key = minNode.key;
+                node.value = minNode.value;
+                remove(minNode.key, node.right);
             }
         }
         return node;
