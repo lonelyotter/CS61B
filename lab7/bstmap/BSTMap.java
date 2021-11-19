@@ -1,5 +1,6 @@
 package bstmap;
 
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -119,21 +120,76 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
 
     @Override
     public Set<K> keySet() {
-        throw new UnsupportedOperationException();
+        Set<K> set = new HashSet<>();
+        addKey(set, root);
+        return set;
+    }
+
+    private void addKey(Set<K> set, Node node) {
+        if (node != null) {
+            addKey(set, node.left);
+            set.add(node.key);
+            addKey(set, node.right);
+        }
+
     }
 
     @Override
     public V remove(K key) {
-        throw new UnsupportedOperationException();
+        if (containsKey(key)) {
+            V returnValue = get(key);
+            root = remove(key, root);
+            size--;
+            return returnValue;
+        } else {
+            return null;
+        }
     }
+
+    private Node remove(K key, Node node) {
+        if (node == null) {
+            return null;
+        } else if (key.compareTo(node.key) > 0) {
+            node.right = remove(key, node.right);
+        } else if (key.compareTo(node.key) < 0) {
+            node.left = remove(key, node.left);
+        } else {
+            if (node.left == null) {
+                return node.right;
+            } else if (node.right == null) {
+                return node.left;
+            } else {
+                Node originalNode = node;
+                node = getMinChild(node.right);
+                node.left = originalNode.left;
+                node.right = remove(node.key, originalNode.right);
+            }
+        }
+        return node;
+    }
+
+    private Node getMinChild(Node node) {
+        if (node.left == null) {
+            return node;
+        } else {
+            return getMinChild(node.left);
+        }
+    }
+
 
     @Override
     public V remove(K key, V value) {
-        throw new UnsupportedOperationException();
+        if (!containsKey(key)) {
+            return null;
+        } else if (!get(key).equals(value)) {
+            return null;
+        } else {
+            return remove(key);
+        }
     }
 
     @Override
     public Iterator<K> iterator() {
-        throw new UnsupportedOperationException();
+        return keySet().iterator();
     }
 }
